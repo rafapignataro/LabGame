@@ -7,8 +7,6 @@ const storage = require('node-sessionstorage')
 
 router.get('/:username', async function (req, res) {
     var retorno = await userService.getUser(req.params);
-    storage.setItem('username', retorno.user.username);
-    console.log(storage.getItem('username', 'bar'));
     res.send(retorno)
 });
 

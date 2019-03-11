@@ -3,8 +3,6 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log(process.env.username);
-    console.log(process.env.user_id);
   res.render('game', { title: 'LAB' });
 });
 

@@ -95,7 +95,6 @@
 
             var data = $("#username").val()
 
-
             $.ajax({
                 type: 'GET',
                 url: '/user/' + data,
@@ -106,13 +105,16 @@
                             'Efetue seu cadastro.';
                     } else {
                         sessionStorage.setItem('username', resp.user.username);
+                        console.log(sessionStorage.getItem('username'))
                         sessionStorage.setItem('user_id', resp.user.id);
-                        console.log(sessionStorage.getItem('username'));
-                        location.href = '/game';
+                        window.setInterval(() => {
+                            location.href = '/game'
+                        }, 500);
+
                     }
                 },
                 error: function (err) {
-                    console.log(err, ' erro');
+                    console.error(err, ' erro');
                 }
             });
         }); //end click

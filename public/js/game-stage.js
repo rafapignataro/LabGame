@@ -28,7 +28,9 @@ Phaser.Group.prototype.getRandomNotExists = function (startIndex, endIndex) {
 
 // Vamos chamar a variável de game, para ficar igual ao sandbox!
 var game = new Phaser.Game(1280, 720, Phaser.AUTO, "divJogo");
+
 var username = sessionStorage.getItem('username');
+var user_id = sessionStorage.getItem('user_id');
 //Variaveis sprites
 
 
@@ -56,11 +58,10 @@ function TelaInicial(game) {
             // Como criamos o CSS acima, não precisamos centralizar via código
             game.scale.pageAlignHorizontally = false;
         }
-
     }
 
     this.preload = function () {
-
+        functions.getHighScore();
         game.load.crossOrigin = "anonymous";
         game.load.spritesheet('bg', 'Sprites/Caca_cenario.png', 6400, 720);
         game.load.image('colisor', 'Sprites/colisor.png', 1280, 25);
@@ -121,13 +122,17 @@ function TelaInicial(game) {
     var DistanciaMaior = 0;
 
     var morto = false;
-    var highScore = 0;
+    var highScore = null;
 
     this.create = function () {
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        functions.getHighScore();
+        // console.log(sessionStorage.getItem('username'))
+
+        functions.getHighScore(username);
+
+
         background = game.add.tileSprite(0, 0, 6400, 720, 'bg');
 
         player = game.add.sprite(50, 300, "player2");
@@ -260,6 +265,7 @@ function TelaInicial(game) {
         musicaGame = game.add.audio('musicaGame', 0.1, true);
 
 
+
         restart();
     }
 
@@ -301,7 +307,7 @@ function TelaInicial(game) {
 
     this.update = function () {
 
-        console.log(player.body.y);
+        // console.log(player.body.y);
 
         var lista = grupoFacebook.getAll('exists', true);
         for (var i = 0; i < lista.length; i++) {
@@ -390,6 +396,8 @@ function TelaInicial(game) {
 
     function collisionHandler(player, icone) {
         console.log(username);
+        functions.newScore(distancia, user_id);
+
         morto = true;
         btnUp.kill();
         btnDown.kill();
@@ -422,6 +430,11 @@ function TelaInicial(game) {
         game.add.tween(txtMenu).to({
             x: game.world.centerX
         }, 500).start();
+
+        functions.getHighScore();
+        console.log(highScore, ' passando valor p DM');
+        DistanciaMaior = highScore;
+        console.log(DistanciaMaior);
 
         txtGameOver.setText("Game Over");
         txtNovoHighScore.setText("Novo recorde!!!");
@@ -738,6 +751,48 @@ function TelaTutorial(game) {
 
     }
 
+}
+
+var functions = {
+    getHighScore: (data) => {
+        $.ajax({
+            type: 'GET',
+            url: '/user/highscore/' + data,
+            contentType: 'application/json; charset=utf-8',
+            success: (resp) => {
+                if (resp.status) {
+                    this.highScore = resp.highscore.value;
+                    this.DistanciaMaior = this.highScore;
+                    console.log(DistanciaMaior);
+                }
+            }
+        });
+
+        console.log(this.highScore, ' highScore');
+    },
+    newScore: (value, user_id) => {
+        console.log('aqui')
+        var datas = {
+            "value": value,
+            "user_id": user_id
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/score/new',
+            data: JSON.stringify(datas),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (resp) {
+                if (resp.status) {
+                    functions.getHighScore();
+                }
+            },
+            error: function (err) {
+                console.log(err, ' erro');
+            }
+        });
+    }
 }
 
 

@@ -48,43 +48,7 @@
   <script src="login_style/vendor/jquery/jquery-3.2.1.min.js"></script>
 
   <script type="text/javascript">
-    var functions = {
-      getHighScore: (data) => {
-        $.ajax({
-          type: 'GET',
-          url: '/user/highscore/' + data,
-          contentType: 'application/json; charset=utf-8',
-          success: (resp) => {
-            if (resp.status)
-              this.highScore = resp.highscore.value;
-            else
-              this.highScore = 0;
-          }
-        });
-
-      },
-      newScore: (value) => {
-
-        var datas = {
-          "value": value
-        };
-
-        $.ajax({
-          type: 'POST',
-          url: '/score/new',
-          data: JSON.stringify(datas),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
-          success: function (resp) {
-            if (resp.status)
-              this.functions.getHighScore();
-          },
-          error: function (err) {
-            console.log(err, ' erro');
-          }
-        });
-      }
-    }
+   
   </script>
 </body>
 

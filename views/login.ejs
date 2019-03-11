@@ -113,6 +113,7 @@
 					if (!resp.status) {
 						document.getElementById('retornoUser').innerHTML = resp.message;
 					} else {
+						console.log('elmeri')
 						sessionStorage.setItem('username', resp.user.username);
 						sessionStorage.setItem('user_id', resp.user.id);
 						location.href = '/game';
